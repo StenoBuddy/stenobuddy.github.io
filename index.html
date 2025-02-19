@@ -3,6 +3,9 @@
 <head>
 <title>StenoBuddy</title>
 <script src="lookup.js"></script>
+<script src="textLookup.js"></script>
+<script src="html2pdf.js"></script>
+<script src="1c2.js"></script>
 <style>
   body {
     font-family: sans-serif;
@@ -35,7 +38,10 @@
 
 <div id="video-container">
   </div>
-
+<div id="paragraphA">
+<textarea id="paragraphB" placeholder="Type the matter here" style="width: 100%; height: 300px; font-size: 18px; display: block;"></textarea>
+<div id="textBoxC" style="display: none;"></div>
+<button onclick="downloadPDF()">Download Result</button>
 <script>
 
   const volumeSelect = document.getElementById('volume-select');
@@ -68,7 +74,7 @@
 */
 
     videoUrl = urlLookup[parseInt(tra,10)][parseInt(spd,10)];  // Use embed URL
-
+	paragraphA.value = textTable[parseInt(tra,10)];
     videoContainer.innerHTML = `<iframe width="560" height="315" src="${videoUrl}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
   }
 
@@ -84,6 +90,72 @@
   populateTranscriptions(volumeSelect.value);
   updateVideo();
 
+
+function downloadPDF() {
+compareParagraphs();
+    
+
+    // Get the PDF file name
+    const pdfFileName = "Customized Dictation"; // Assuming the document title contains the desired PDF file name
+
+    // Get current date and time
+    const currentDate = new Date();
+    const day = currentDate.getDate();
+    const monthIndex = currentDate.getMonth();
+    const year = currentDate.getFullYear();
+    const hours = currentDate.getHours();
+    const currentMinutes = currentDate.getMinutes(); // Renamed to currentMinutes to avoid conflict
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const formattedHours = hours % 12 || 12; // Convert to 12-hour format
+    const formattedMinutes = currentMinutes < 10 ? '0' + currentMinutes : currentMinutes;
+
+    // Array of month names
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    // Format the date
+    const formattedDate = `${day} ${monthNames[monthIndex]} ${year},`;
+
+    // Format the time
+    const formattedTime = `${formattedHours}:${formattedMinutes} ${ampm}`;
+
+    // Create header content with PDF file name, time taken, and download date
+    const headerContent = `
+        <div style="text-align: center;">
+            <a href="https://stenobuddy.github.io/" style="color: blue; text-decoration: none;">https://stenobuddy.github.io</a>
+        </div>
+        <div style="text-align: center; margin-top: 5px;">
+            Test Date & Time: ${formattedDate} ${formattedTime} <br>
+        </div>
+    `;
+
+    // Create a container for the header text
+    const headerText = document.createElement('div');
+    headerText.innerHTML = headerContent;
+    headerText.style.textAlign = 'left'; // Align the header text to the left
+
+    // Get the textBoxC element
+    const textBoxC = document.getElementById('textBoxC');
+
+    // Insert the header text before any other content in textBoxC
+    textBoxC.insertBefore(headerText, textBoxC.firstChild);
+
+    // Convert the HTML element to a PDF using html2pdf library
+    html2pdf()
+        .from(textBoxC)
+        .set({
+            margin: 10,
+            filename: pdfFileName, // Use the dynamically extracted PDF file name
+            jsPDF: {
+                unit: 'mm',
+                format: 'a4',
+                orientation: 'portrait'
+            }
+        })
+        .save();
+}
 
 </script>
 
