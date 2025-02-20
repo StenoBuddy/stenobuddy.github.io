@@ -266,7 +266,6 @@ comparedText += '</div>';
             document.getElementById('textBoxC').innerHTML = '<h2>Result Sheet:</h2>' + comparedText + tableContent;
             document.getElementById('textBoxC').style.display = 'block';
             document.getElementById('textBoxC').style.border = '2px solid black';
-
             var differenceSpans = document.querySelectorAll('#textBoxC span[style*="background-color:"]');
             differenceSpans.forEach(function (span) {
                 span.style.color = 'white';
