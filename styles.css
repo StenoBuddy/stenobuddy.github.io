@@ -72,3 +72,12 @@ button:hover {
     padding-bottom: 10px;
     background-color: rgb(255, 153, 131);
 }
+a {
+  text-decoration: none; 
+  color: inherit;
+}
+
+a:hover {  
+  color: rgb(240, 240, 240);
+  text-decoration: none;
+}
