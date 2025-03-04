@@ -283,7 +283,7 @@ const data = [
 "41 70 https://www.youtube.com/embed/M9aK9SGta1o",
 "41 75 https://www.youtube.com/embed/PotL8fQB42s",
 "41 80 https://www.youtube.com/embed/qjjNJqJdnGs",
-"41 85 https://www.youtube.com/watch?v=-2G-QkJJWDw",
+"41 85 https://www.youtube.com/embed/-2G-QkJJWDw",
 "41 90 https://www.youtube.com/embed/WbvqWdY4y00",
 "41 95 https://www.youtube.com/embed/lPJeiXbvdHk",
 "41 100 https://www.youtube.com/embed/CgNc9kkkCE8",
