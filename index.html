@@ -41,6 +41,11 @@
     </div>
     <div id="video-container">
     </div>
+	Typing timer: <span id="timer">40:00</span><br>
+	<label><input type="radio" name="duration" value="2400"> 40 min</label>
+	<label><input type="radio" name="duration" value="3000" checked> 50 min</label>
+	<button id="startPause" class="tmrBtn">Start</button>
+	<button id="reset" class="tmrBtn">Reset</button>
     <div id="paragraphA"></div>
     <textarea class="inputBox" id="paragraphB" spellcheck="false" placeholder="Type the matter here"></textarea>
     <div class="resultText" id="textBoxC" style="display: none;"></div>
@@ -52,6 +57,73 @@
     </div>
   </div>
 <script>
+let timerDisplay = document.getElementById('timer');
+let startPauseButton = document.getElementById('startPause');
+let resetButton = document.getElementById('reset');
+let timerInterval;
+let timeLeft = 3000;
+let durationRadios = document.getElementsByName('duration');
+
+function updateTimerDisplay() {
+  let minutes = Math.floor(timeLeft / 60);
+  let seconds = timeLeft % 60;
+  timerDisplay.textContent = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    if (timeLeft > 0) {
+      timeLeft--;
+      updateTimerDisplay();
+    } else {
+      clearInterval(timerInterval);
+      startPauseButton.textContent = 'Start';
+    }
+  }, 1000);
+  startPauseButton.textContent = 'Pause';
+}
+
+function pauseTimer() {
+  clearInterval(timerInterval);
+  startPauseButton.textContent = 'Start';
+}
+
+startPauseButton.addEventListener('click', () => {
+  if (startPauseButton.textContent === 'Start') {
+    startTimer();
+  } else {
+    pauseTimer();
+  }
+});
+
+resetButton.addEventListener('click', () => {
+  clearInterval(timerInterval);
+  for (let radio of durationRadios) {
+    if (radio.checked) {
+      timeLeft = parseInt(radio.value);
+      break;
+    }
+  }
+  updateTimerDisplay();
+  startPauseButton.textContent = 'Start';
+});
+
+function updateDuration() {
+    clearInterval(timerInterval);
+    for (let radio of durationRadios) {
+        if (radio.checked) {
+            timeLeft = parseInt(radio.value);
+            break;
+        }
+    }
+    updateTimerDisplay();
+    startPauseButton.textContent = 'Start';
+}
+
+for (let radio of durationRadios) {
+    radio.addEventListener('change', updateDuration);
+}
+
 
   const volumeSelect = document.getElementById('volume-select');
   const transcriptionSelect = document.getElementById('transcription-select');
@@ -100,6 +172,7 @@
   // Initialize on load
   populateTranscriptions(volumeSelect.value);
   updateVideo();
+  updateTimerDisplay(); // Initial display
 
 
 function downloadPDF() {
