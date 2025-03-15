@@ -461,6 +461,20 @@ const data = [
 "65 90 https://www.youtube.com/embed/roCKbqoOcxc",
 "65 95 https://www.youtube.com/embed/bQa9Fi_YlHk",
 "65 100 https://www.youtube.com/embed/l8b0mukowXM",
+"66 70 https://www.youtube.com/embed/RjF6oZgQ8q0",
+"66 75 https://www.youtube.com/embed/D0WCCXz4xbs",
+"66 80 https://www.youtube.com/embed/C5iNHsEqvBg",
+"66 85 https://www.youtube.com/embed/bcw60SG_UMU",
+"66 90 https://www.youtube.com/embed/4zGJJfm512g",
+"66 95 https://www.youtube.com/embed/YoPk_MMAYvE",
+"66 100 https://www.youtube.com/embed/FQCYAI-wix4",
+"67 70 https://www.youtube.com/embed/a8IFQWk_HJo",
+"67 75 https://www.youtube.com/embed/6lxtyRQRU7o",
+"67 80 https://www.youtube.com/embed/ydIGv8RHULQ",
+"67 85 https://www.youtube.com/embed/ldkcsf2xpmw",
+"67 90 https://www.youtube.com/embed/kLpTfDujOKg",
+"67 95 https://www.youtube.com/embed/NzNOOR_GX70",
+"67 100 https://www.youtube.com/embed/d1bA1-hzKk0",
 ];
 
 const urlLookup = {};

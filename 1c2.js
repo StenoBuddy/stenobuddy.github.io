@@ -109,11 +109,9 @@ comparedText += '</div>';
                     comparedText += '<span style="text-decoration: line-through; text-decoration-color: black; background-color: violet;">' + wordB + '</span> ';
                     wordAIndex++;
                     wordBIndex++;
-                    if (useNewLogic) {
-                        numFullDiff++;
-                    } else {
-                        numHalfDiff++;
-                    }
+					
+					numHalfDiff++;
+					
                 } else {
                     if (!wordA) {
                         comparedText += '<span style="background-color: red; text-decoration: line-through;">' + wordB + '</span> ';

@@ -92,3 +92,10 @@ a:hover {
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
+@media screen and (max-width: 800px) {
+    select {
+        width: 100%;
+        margin-bottom: 2px;
+    }
+}

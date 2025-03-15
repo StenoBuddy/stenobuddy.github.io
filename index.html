@@ -4,12 +4,12 @@
 <title>StenoBuddy</title>
 <script src="lookup.js"></script>
 <script src="textLookup.js"></script>
-<script src="html2pdf.js"></script>
 <script src="1c2.js"></script>
 <link rel="stylesheet" href="styles.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
   <div class="header">
@@ -23,7 +23,7 @@
         <option value="1">Volume 1</option>
         <option value="2">Volume 2</option>
         <option value="3">Volume 3</option>
-        <option value="0">Budget Speech</option>
+        <option value="4">Volume 4 Soon</option>
       </select>
 
       <select id="transcription-select">
@@ -49,7 +49,7 @@
     <div id="paragraphA"></div>
     <textarea class="inputBox" id="paragraphB" spellcheck="false" placeholder="Type the matter here"></textarea>
     <div class="resultText" id="textBoxC" style="display: none;"></div>
-    <button onclick="downloadPDF()">Download Result</button>
+    <button onclick="downloadPDF()">Show Result</button>
   </div>
   <div class="footer">
     <div>
@@ -131,10 +131,10 @@ for (let radio of durationRadios) {
   const videoContainer = document.getElementById('video-container');
 
   const transcriptions = {
-	0: Array.from({ length: 1 }, (_, i) => `${i + 0}`),
     1: Array.from({ length: 22 }, (_, i) => `${i + 1}`),
     2: Array.from({ length: 22 }, (_, i) => `${i + 23}`),//
-    3: Array.from({ length: 21 }, (_, i) => `${i + 45}`),//only21 vids in 3rd volume
+    3: Array.from({ length: 22 }, (_, i) => `${i + 45}`),
+    4: Array.from({ length: 1 }, (_, i) => `${i + 67}`),
   };
 
   function populateTranscriptions(volume) {
@@ -226,19 +226,6 @@ compareParagraphs();
     // Insert the header text before any other content in textBoxC
     textBoxC.insertBefore(headerText, textBoxC.firstChild);
 
-    // Convert the HTML element to a PDF using html2pdf library
-    html2pdf()
-        .from(textBoxC)
-        .set({
-            margin: 10,
-            filename: pdfFileName, // Use the dynamically extracted PDF file name
-            jsPDF: {
-                unit: 'mm',
-                format: 'a4',
-                orientation: 'portrait'
-            }
-        })
-        .save();
 }
 
 </script>
