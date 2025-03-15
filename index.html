@@ -158,7 +158,7 @@ for (let radio of durationRadios) {
 
     videoUrl = urlLookup[parseInt(tra,10)][parseInt(spd,10)];  // Use embed URL
 	paragraphA.value = textTable[parseInt(tra,10)];
-    videoContainer.innerHTML = `<iframe width="560" height="315" src="${videoUrl}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
+    videoContainer.innerHTML = `<iframe src="${videoUrl}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
   }
 
   volumeSelect.addEventListener('change', () => {
