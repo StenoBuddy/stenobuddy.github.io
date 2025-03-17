@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>StenoBuddy</title>
+<script src="lookup.js"></script>
+<script src="textLookup.js"></script>
+<script src="1c2.js"></script>
+<link rel="stylesheet" href="styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <div class="header">
+    <h1>StenoBuddy</h1>
+  </div>
+
+  <div class="main">
+    <h2>Please select a KC passage</h2>
+    <div class="select-panel">
+      <select id="volume-select">
+        <option value="1">Volume 1</option>
+        <option value="2">Volume 2</option>
+        <option value="3">Volume 3</option>
+        <option value="4">Volume 4</option>
+        <option value="5">Volume 5</option>
+        <option value="6">Volume 6</option>
+        <option value="7">Volume 7</option>
+        <option value="8">Volume 8</option>
+        <option value="9">Volume 9</option>
+      </select>
+
+      <select id="transcription-select">
+      </select>
+    
+      <select id="speed-select">
+        <option value="70">70 WPM</option>
+        <option value="75">75 WPM</option>
+        <option value="80">80 WPM</option>
+        <option value="85">85 WPM</option>
+        <option value="90">90 WPM</option>
+        <option value="95">95 WPM</option>
+        <option value="100">100 WPM</option>
+      </select>
+    </div>
+    <div id="video-container">
+    </div>
+	Typing timer: <span id="timer">40:00</span><br>
+	<label><input type="radio" name="duration" value="2400"> 40 min</label>
+	<label><input type="radio" name="duration" value="3000" checked> 50 min</label>
+	<button id="startPause" class="tmrBtn">Start</button>
+	<button id="reset" class="tmrBtn">Reset</button>
+    <div id="paragraphA"></div>
+    <textarea class="inputBox" id="paragraphB" spellcheck="false" placeholder="Type the matter here"></textarea>
+    <div class="resultText" id="textBoxC" style="display: none;"></div>
+    <button onclick="downloadPDF()">Show Result</button>
+  </div>
+  <div class="footer">
+    <div>
+    Made with <span style="color: red;">&hearts;</span> in Patna &middot; Anshu &middot; <a href="https://t.me/ar_anshu"> Contact </a>
+    </div>
+  </div>
+<script>
+let timerDisplay = document.getElementById('timer');
+let startPauseButton = document.getElementById('startPause');
+let resetButton = document.getElementById('reset');
+let timerInterval;
+let timeLeft = 3000;
+let durationRadios = document.getElementsByName('duration');
+
+function updateTimerDisplay() {
+  let minutes = Math.floor(timeLeft / 60);
+  let seconds = timeLeft % 60;
+  timerDisplay.textContent = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    if (timeLeft > 0) {
+      timeLeft--;
+      updateTimerDisplay();
+    } else {
+      clearInterval(timerInterval);
+      startPauseButton.textContent = 'Start';
+    }
+  }, 1000);
+  startPauseButton.textContent = 'Pause';
+}
+
+function pauseTimer() {
+  clearInterval(timerInterval);
+  startPauseButton.textContent = 'Start';
+}
+
+startPauseButton.addEventListener('click', () => {
+  if (startPauseButton.textContent === 'Start') {
+    startTimer();
+  } else {
+    pauseTimer();
+  }
+});
+
+resetButton.addEventListener('click', () => {
+  clearInterval(timerInterval);
+  for (let radio of durationRadios) {
+    if (radio.checked) {
+      timeLeft = parseInt(radio.value);
+      break;
+    }
+  }
+  updateTimerDisplay();
+  startPauseButton.textContent = 'Start';
+});
+
+function updateDuration() {
+    clearInterval(timerInterval);
+    for (let radio of durationRadios) {
+        if (radio.checked) {
+            timeLeft = parseInt(radio.value);
+            break;
+        }
+    }
+    updateTimerDisplay();
+    startPauseButton.textContent = 'Start';
+}
+
+for (let radio of durationRadios) {
+    radio.addEventListener('change', updateDuration);
+}
+
+
+  const volumeSelect = document.getElementById('volume-select');
+  const transcriptionSelect = document.getElementById('transcription-select');
+  const speedSelect = document.getElementById('speed-select');
+  const videoContainer = document.getElementById('video-container');
+
+  const transcriptions = {
+    1: Array.from({ length: 22 }, (_, i) => `${i + 1}`),
+    2: Array.from({ length: 22 }, (_, i) => `${i + 23}`),//
+    3: Array.from({ length: 22 }, (_, i) => `${i + 45}`),
+    4: Array.from({ length: 22 }, (_, i) => `${i + 67}`),
+    5: Array.from({ length: 22 }, (_, i) => `${i + 89}`),
+    6: Array.from({ length: 22 }, (_, i) => `${i + 111}`),
+    7: Array.from({ length: 22 }, (_, i) => `${i + 133}`),
+    8: Array.from({ length: 22 }, (_, i) => `${i + 155}`),
+    9: Array.from({ length: 22 }, (_, i) => `${i + 177}`),
+  };
+
+  function populateTranscriptions(volume) {
+    transcriptionSelect.innerHTML = ''; // Clear existing options
+    const options = transcriptions[volume];
+    options.forEach(transcription => {
+      const option = document.createElement('option');
+      option.value = transcription;
+      option.text = "Transcription "+transcription.toString();
+      transcriptionSelect.appendChild(option);
+    });
+  }
+  
+  function updateVideo() {
+  const spd = document.getElementById('speed-select').value;
+  const tra = document.getElementById('transcription-select').value;
+	
+    //videoUrl = urlLookup[parseInt(tra,10)][parseInt(spd,10)];  // Use embed URL
+	paragraphA.value = textTable[parseInt(tra,10)];
+	paragraphB.placeholder = "Type transcription "+ tra +" here, or select a different transcription";
+    //videoContainer.innerHTML = `<iframe src="${videoUrl}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
+  }
+
+  volumeSelect.addEventListener('change', () => {
+    populateTranscriptions(volumeSelect.value);
+    updateVideo();
+  });
+
+  transcriptionSelect.addEventListener('change', updateVideo);
+  speedSelect.addEventListener('change', updateVideo);
+
+  // Initialize on load
+  populateTranscriptions(volumeSelect.value);
+  updateVideo();
+  updateTimerDisplay(); // Initial display
+
+
+function downloadPDF() {
+compareParagraphs();
+    
+
+    // Get the PDF file name
+    const pdfFileName = "Stenobuddy result";
+
+    // Get current date and time
+    const currentDate = new Date();
+    const day = currentDate.getDate();
+    const monthIndex = currentDate.getMonth();
+    const year = currentDate.getFullYear();
+    const hours = currentDate.getHours();
+    const currentMinutes = currentDate.getMinutes(); // Renamed to currentMinutes to avoid conflict
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const formattedHours = hours % 12 || 12; // Convert to 12-hour format
+    const formattedMinutes = currentMinutes < 10 ? '0' + currentMinutes : currentMinutes;
+
+    // Array of month names
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    // Format the date
+    const formattedDate = `${day} ${monthNames[monthIndex]} ${year},`;
+
+    // Format the time
+    const formattedTime = `${formattedHours}:${formattedMinutes} ${ampm}`;
+
+    // Create header content with PDF file name, time taken, and download date
+    const headerContent = `
+        <div style="text-align: center;">
+            <a href="https://stenobuddy.github.io/" style="color: blue; text-decoration: none;">https://stenobuddy.github.io</a>
+        </div>
+        <div style="text-align: center; margin-top: 5px;">
+            Test Date & Time: ${formattedDate} ${formattedTime} <br>
+        </div>
+    `;
+
+    // Create a container for the header text
+    const headerText = document.createElement('div');
+    headerText.innerHTML = headerContent;
+    headerText.style.textAlign = 'left'; // Align the header text to the left
+
+    // Get the textBoxC element
+    const textBoxC = document.getElementById('textBoxC');
+
+    // Insert the header text before any other content in textBoxC
+    textBoxC.insertBefore(headerText, textBoxC.firstChild);
+
+}
+
+</script>
+
+</body>
+</html>
