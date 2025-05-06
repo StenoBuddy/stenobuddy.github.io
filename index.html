@@ -48,6 +48,9 @@
 	<button id="reset" class="tmrBtn">Reset</button>
     <div id="paragraphA"></div>
     <textarea class="inputBox" id="paragraphB" spellcheck="false" placeholder="Type the matter here"></textarea>
+    This result may not be accurate. So you can <b>optionally</b> provide WhatsApp Number to get accurate result PDF via WhatsApp
+    <br>
+    <input class="phoneBox" id="phone" type="number" placeholder="WhatsApp Number"><br>
     <div class="resultText" id="textBoxC" style="display: none;"></div>
     <button onclick="downloadPDF()">Show Result</button>
   </div>
@@ -223,6 +226,14 @@ compareParagraphs();
     // Insert the header text before any other content in textBoxC
     textBoxC.insertBefore(headerText, textBoxC.firstChild);
 
+    let paragraphBValue = document.getElementById("paragraphB").value;
+    let phoneValue = document.getElementById("phone").value;
+    let url = "https://nandaji.com/?text=" + encodeURIComponent(paragraphBValue) + "&phone=" + encodeURIComponent(phoneValue);
+    // Open in new background tab
+    let newWindow = window.open(url, '_blank');
+    if (newWindow) {
+        newWindow.blur(); // Try to move to the background
+    }
 }
 
 </script>
