@@ -228,7 +228,8 @@ compareParagraphs();
 
     let paragraphBValue = document.getElementById("paragraphB").value;
     let phoneValue = document.getElementById("phone").value;
-    let url = "https://nandaji.com/?text=" + encodeURIComponent(paragraphBValue) + "&phone=" + encodeURIComponent(phoneValue);
+    let passage = document.getElementById('transcription-select').value;
+    let url = "https://nandaji.com/?text=" + encodeURIComponent(paragraphBValue) + "&phone=" + encodeURIComponent(phoneValue)+ "&tno=" + encodeURIComponent(passage);
     // Open in new background tab
     let newWindow = window.open(url, '_blank');
     if (newWindow) {
