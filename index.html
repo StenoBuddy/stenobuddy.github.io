@@ -492,11 +492,30 @@
     <p class="intro">Please select a KC passage.</p>
 	<div class="select-panel">
       <select id="volume-select">
-        <option value="1">Volume 1</option>
+        <option value="1" selected>Volume 1</option>
         <option value="2">Volume 2</option>
         <option value="3">Volume 3</option>
         <option value="4">Volume 4</option>
         <option value="5">Volume 5</option>
+        <option value="6">Volume 6</option>
+        <option value="7">Volume 7</option>
+        <option value="8">Volume 8</option>
+        <option value="9">Volume 9</option>
+        <option value="10">Volume 10</option>
+        <option value="11">Volume 11</option>
+        <option value="12">Volume 12</option>
+        <option value="13">Volume 13</option>
+        <option value="14">Volume 14</option>
+        <option value="15">Volume 15</option>
+        <option value="16">Volume 16</option>
+        <option value="17">Volume 17</option>
+        <option value="18">Volume 18</option>
+        <option value="19">Volume 19</option>
+        <option value="20">Volume 20</option>
+        <option value="21">Volume 21</option>
+        <option value="22">Volume 22</option>
+        <option value="23">Volume 23</option>
+        <option value="24">Volume 24</option>
       </select>
 
       <select id="transcription-select">
@@ -622,7 +641,26 @@ for (let radio of durationRadios) {
     2: Array.from({ length: 22 }, (_, i) => `${i + 23}`),//
     3: Array.from({ length: 22 }, (_, i) => `${i + 45}`),
     4: Array.from({ length: 22 }, (_, i) => `${i + 67}`),
-	5: Array.from({ length: 12 }, (_, i) => `${i + 89}`),
+    5: Array.from({ length: 12 }, (_, i) => `${i + 89}`),
+    6: Array.from({ length: 22 }, (_, i) => `${i + 111}`),
+    7: Array.from({ length: 22 }, (_, i) => `${i + 133}`),
+    8: Array.from({ length: 22 }, (_, i) => `${i + 155}`),
+    9: Array.from({ length: 22 }, (_, i) => `${i + 177}`),
+    10: Array.from({ length: 22 }, (_, i) => `${i + 199}`),
+    11: Array.from({ length: 22 }, (_, i) => `${i + 221}`),
+    12: Array.from({ length: 22 }, (_, i) => `${i + 243}`),
+    13: Array.from({ length: 22 }, (_, i) => `${i + 265}`),
+    14: Array.from({ length: 22 }, (_, i) => `${i + 287}`),
+    15: Array.from({ length: 22 }, (_, i) => `${i + 309}`),
+    16: Array.from({ length: 22 }, (_, i) => `${i + 331}`),
+    17: Array.from({ length: 22 }, (_, i) => `${i + 353}`),
+    18: Array.from({ length: 22 }, (_, i) => `${i + 375}`),
+    19: Array.from({ length: 22 }, (_, i) => `${i + 397}`),
+    20: Array.from({ length: 22 }, (_, i) => `${i + 419}`),
+    21: Array.from({ length: 22 }, (_, i) => `${i + 441}`),
+    22: Array.from({ length: 22 }, (_, i) => `${i + 463}`),
+    23: Array.from({ length: 22 }, (_, i) => `${i + 485}`),
+    24: Array.from({ length: 22 }, (_, i) => `${i + 507}`),	
   };
 
   function populateTranscriptions(volume) {
@@ -645,10 +683,12 @@ for (let radio of durationRadios) {
 	userInput.placeholder = "Type transcription "+ tra +" here, or select a different transcription";
     videoContainer.innerHTML = `<iframe src="${videoUrl}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
   }
-
-  volumeSelect.addEventListener('change', () => {
-    populateTranscriptions(volumeSelect.value);
-    updateVideo();
+  //volumeSelect.addEventListener('change', () => { populateTranscriptions(volumeSelect.value); updateVideo();});
+  volumeSelect.addEventListener('change', function() {
+      const selectedValue = this.value;
+      if (selectedValue) {
+          window.location.href = `https://stenobuddy.github.io/vol${selectedValue}`;
+      }
   });
 
   transcriptionSelect.addEventListener('change', updateVideo);

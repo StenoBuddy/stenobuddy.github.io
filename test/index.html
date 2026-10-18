@@ -1,245 +1,229 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>StenoBuddy</title>
-<script src="lookup.js"></script>
-<script src="textLookup.js"></script>
-<script src="1c2.js"></script>
-<link rel="stylesheet" href="styles.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StenoBuddy</title>
+	
+    <style>
+      :root { color-scheme: light; --ink:#17233b; --muted:#65738a; --line:#dce4ef; --panel:#ffffff; --page:#f3f6fb; --accent:#315ee8; }
+      * { box-sizing: border-box; }
+      body { margin:0; padding: clamp(16px, 3vw, 42px); background:var(--page); color:var(--ink); font: 16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif; max-width:1500px; margin-inline:auto; }
+      h1 { font-size:clamp(35px,3vw,36px); font-weight:800; line-height:1.15; color:var(--accent); margin:0 0 8px; }
+      .intro { color:var(--muted); margin:0 0 24px; }
+      .field-label { display:block; margin:22px 0 8px; font-weight:750; font-size:14px; }
+      textarea { display:block; width:100%; min-height:220px; resize:vertical; padding:17px 18px; border:1px solid var(--line); border-radius:14px; background:var(--panel); color:var(--ink); font:16px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace !important; box-shadow:0 4px 16px rgba(24,44,83,.045); outline:none; transition:border-color .15s,box-shadow .15s; }
+      textarea:focus { border-color:var(--accent); box-shadow:0 0 0 4px rgba(49,94,232,.12); }
+      /* Keep the built-in reference source and its processed preview hidden from the user. */
+      #original, #originalContent { display:none !important; }
+      #original { min-height:260px; }
+      #userInput { min-height:220px; }
+      #originalContent, #comparisonResult { margin-top:10px; padding:20px; border:1px solid var(--line); border-radius:14px; background:#fff; box-shadow:0 4px 16px rgba(24,44,83,.045); white-space:pre-wrap; overflow-wrap:anywhere; font:16px/1.9 ui-monospace,SFMono-Regular,Consolas,monospace; }
+      #originalContent { color:#34435b; }
+      #comparisonResult { min-height:90px; }
+      #compareButton { display:inline-flex; align-items:center; justify-content:center; margin-top:22px; padding:12px 25px; border:0; border-radius:10px; background:var(--accent); color:#fff; font-size:15px; font-weight:750; cursor:pointer; box-shadow:0 5px 12px rgba(49,94,232,.22); transition:transform .15s,background .15s; }
+      #compareButton:hover { background:#244bd0; transform:translateY(-1px); }
+      #compareButton:active { transform:translateY(0); }
+      .legend { display:flex; flex-wrap:wrap; gap:9px; margin:12px 0 4px; }
+      .legend-item { display:inline-flex; align-items:center; gap:7px; padding:6px 10px; border:1px solid var(--line); border-radius:999px; background:#fff; color:#35435b; font-size:12px; font-weight:650; }
+      .legend-swatch { width:9px; height:9px; border-radius:50%; }
+      .addition { color:#126b3a; background:#d9fbe6; border-bottom:2px solid #27a35a; border-radius:4px; padding:1px 3px; }
+      .omission { color:#a21d2d; background:#ffe1e5; text-decoration:line-through; text-decoration-thickness:1.5px; border-radius:4px; padding:1px 3px; }
+      .spelling { color:#9a4a00; background:#fff0d6; border-radius:4px; padding:1px 3px; }
+      .substitution { color:#7c2d12; background:#ffe4d6; border-bottom:2px solid #e87945; border-radius:4px; padding:1px 3px; }
+      .spelling s { color:#b42318; text-decoration-thickness:2px; }
+      .capitalization { color:#1748b5; background:#dceaff; border-bottom:2px solid #5c8df6; border-radius:4px; padding:1px 3px; }
+      .punctuation { color:#7135a5; background:#f0e3ff; border-bottom:2px solid #a36be0; border-radius:4px; padding:1px 3px; }
+      .similarity { color:#7b4c00; background:#fff4c2; border-radius:4px; padding:1px 3px; }
+      #comparisonStats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-top:16px; }
+      .stat-card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:13px 15px; }
+      .stat-label { color:var(--muted); font-size:12px; font-weight:700; }
+      .stat-value { display:block; margin-top:2px; font-size:23px; font-weight:800; letter-spacing:-.03em; }
+      #compareButton { display:inline-flex; align-items:center; justify-content:center; gap:10px; min-width:190px; }
+      #compareButton:disabled { opacity:.88; cursor:wait; }
+      .loading-spinner { width:17px; height:17px; border:2px solid rgba(255,255,255,.42); border-top-color:#fff; border-radius:50%; display:inline-block; animation:compareSpin .75s linear infinite; flex:0 0 auto; }
+      @keyframes compareSpin { to { transform:rotate(360deg); } }
+      @media (prefers-reduced-motion: reduce) { .loading-spinner { animation-duration:1.8s; } }
+      @media (min-width:1000px) { #original,#userInput { min-height:280px; } }
+      @media (max-width:640px) { body { padding:14px; } textarea { font-size:14px !important; padding:13px; } #originalContent,#comparisonResult { padding:13px; font-size:14px; } #comparisonStats { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    
+      /* Added CSS-only styling for passage selection and typing timer controls */
+      .select-panel {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        margin: 0 0 18px;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--panel);
+        box-shadow: 0 4px 16px rgba(24,44,83,.045);
+      }
+      .select-panel select {
+        flex: 1 1 190px;
+        min-width: 0;
+        min-height: 44px;
+        padding: 10px 40px 10px 13px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background-color: #fff;
+        color: var(--ink);
+        font: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        outline: none;
+        transition: border-color .15s, box-shadow .15s;
+      }
+      .select-panel select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(49,94,232,.12);
+      }
+      #video-container {
+			width: 100%;
+			max-width: 500px; /* Optional: limits max width on large screens */
+			margin: 0;   /* Centers the container */
+		}
+
+		/* Responsive 16:9 Aspect Ratio Wrapper */
+		.video-responsive {
+			position: relative;
+			padding-bottom: 56.25%; /* This gives it a 16:9 aspect ratio (height is 56.25% of width) */
+			height: 0;
+			overflow: hidden;
+			width: 100%;
+		}
+
+		.video-responsive iframe {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			border: 0;
+		}
+      #video-container video,
+      #video-container iframe {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 14px;
+        background: #111827;
+        box-shadow: 0 4px 16px rgba(24,44,83,.10);
+      }
+      #timer {
+        display: inline-block;
+        min-width: 86px;
+        margin: 0 0 12px 6px;
+        padding: 5px 12px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: #fff;
+        color: var(--accent);
+        font-size: 20px;
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+        line-height: 1.4;
+        text-align: center;
+        vertical-align: middle;
+      }
+      body > label:has(input[name="duration"]) {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0 10px 12px 0;
+        padding: 8px 12px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: #fff;
+        color: var(--ink);
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      input[name="duration"] {
+        width: 16px;
+        height: 16px;
+        margin: 0;
+        accent-color: var(--accent);
+        cursor: pointer;
+      }
+      .tmrBtn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        margin: 0 8px 12px 0;
+        padding: 9px 18px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: #fff;
+        color: var(--ink);
+        font: inherit;
+        font-size: 14px;
+        font-weight: 750;
+        cursor: pointer;
+        transition: transform .15s, background .15s, border-color .15s, box-shadow .15s;
+      }
+      #startPause {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: #fff;
+        box-shadow: 0 4px 10px rgba(49,94,232,.18);
+      }
+      #startPause:hover { background: #244bd0; }
+      #reset:hover {
+        border-color: var(--accent);
+        background: #eef2ff;
+      }
+      .tmrBtn:hover { transform: translateY(-1px); }
+      .tmrBtn:active { transform: translateY(0); }
+      .tmrBtn:focus-visible,
+      .select-panel select:focus-visible,
+      input[name="duration"]:focus-visible {
+        outline: 3px solid rgba(49,94,232,.25);
+        outline-offset: 2px;
+      }
+      @media (max-width: 640px) {
+        .select-panel { gap: 9px; padding: 11px; }
+        .select-panel select { flex-basis: 100%; width: 100%; }
+        #timer { margin-left: 0; }
+        body > label:has(input[name="duration"]) { margin-right: 5px; padding: 7px 9px; }
+        .tmrBtn { margin-right: 6px; }
+      }
+	</style>
+
 </head>
 <body>
-  <div class="header">
     <h1>StenoBuddy</h1>
-  </div>
-
-  <div class="main">
-    <h2>Please select a KC passage</h2>
-    <div class="select-panel">
-      <select id="volume-select">
-        <option value="1">Volume 1</option>
-        <option value="2">Volume 2</option>
-        <option value="3">Volume 3</option>
-        <option value="4">Volume 4</option>
-        <option value="5">Volume 5</option>
-        <option value="6">Volume 6</option>
-        <option value="7">Volume 7</option>
-        <option value="8">Volume 8</option>
-        <option value="9">Volume 9</option>
-        <option value="10">Volume 10</option>
-        <option value="11">Volume 11</option>
-      </select>
-
-      <select id="transcription-select">
-      </select>
-    
-      <select id="speed-select">
-        <option value="70">70 WPM</option>
-        <option value="75">75 WPM</option>
-        <option value="80">80 WPM</option>
-        <option value="85">85 WPM</option>
-        <option value="90">90 WPM</option>
-        <option value="95">95 WPM</option>
-        <option value="100">100 WPM</option>
-      </select>
-    </div>
-    <div id="video-container">
-    </div>
-	Typing timer: <span id="timer">40:00</span><br>
-	<label><input type="radio" name="duration" value="2400"> 40 min</label>
-	<label><input type="radio" name="duration" value="3000" checked> 50 min</label>
-	<button id="startPause" class="tmrBtn">Start</button>
-	<button id="reset" class="tmrBtn">Reset</button>
-    <div id="paragraphA"></div>
-    <textarea class="inputBox" id="paragraphB" spellcheck="false" placeholder="Type the matter here"></textarea>
-    <div class="resultText" id="textBoxC" style="display: none;"></div>
-    <button onclick="downloadPDF()">Show Result</button>
-  </div>
-  <div class="footer">
-    <div>
-    Made with <span style="color: red;">&hearts;</span> in Patna &middot; Anshu &middot; <a href="https://t.me/ar_anshu"> Contact </a>
-    </div>
-  </div>
-<script>
-let timerDisplay = document.getElementById('timer');
-let startPauseButton = document.getElementById('startPause');
-let resetButton = document.getElementById('reset');
-let timerInterval;
-let timeLeft = 3000;
-let durationRadios = document.getElementsByName('duration');
-
-function updateTimerDisplay() {
-  let minutes = Math.floor(timeLeft / 60);
-  let seconds = timeLeft % 60;
-  timerDisplay.textContent = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+	<button id="compareButton" onclick="window.location.href='https://stenobuddy.github.io/';">Click here to go to the new site!</button>
+<style>
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  15%, 45% { transform: scale(1.3); }
+  30% { transform: scale(1.1); }
 }
-
-function startTimer() {
-  timerInterval = setInterval(() => {
-    if (timeLeft > 0) {
-      timeLeft--;
-      updateTimerDisplay();
-    } else {
-      clearInterval(timerInterval);
-      startPauseButton.textContent = 'Start';
-    }
-  }, 1000);
-  startPauseButton.textContent = 'Pause';
+.footer-signature {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 14px;
 }
-
-function pauseTimer() {
-  clearInterval(timerInterval);
-  startPauseButton.textContent = 'Start';
+.beating-heart {
+  color: #ff3333;
+  display: inline-block;
+  animation: heartbeat 1.2s infinite;
 }
+</style>
 
-startPauseButton.addEventListener('click', () => {
-  if (startPauseButton.textContent === 'Start') {
-    startTimer();
-  } else {
-    pauseTimer();
-  }
-});
-
-resetButton.addEventListener('click', () => {
-  clearInterval(timerInterval);
-  for (let radio of durationRadios) {
-    if (radio.checked) {
-      timeLeft = parseInt(radio.value);
-      break;
-    }
-  }
-  updateTimerDisplay();
-  startPauseButton.textContent = 'Start';
-});
-
-function updateDuration() {
-    clearInterval(timerInterval);
-    for (let radio of durationRadios) {
-        if (radio.checked) {
-            timeLeft = parseInt(radio.value);
-            break;
-        }
-    }
-    updateTimerDisplay();
-    startPauseButton.textContent = 'Start';
-}
-
-for (let radio of durationRadios) {
-    radio.addEventListener('change', updateDuration);
-}
-
-
-  const volumeSelect = document.getElementById('volume-select');
-  const transcriptionSelect = document.getElementById('transcription-select');
-  const speedSelect = document.getElementById('speed-select');
-  const videoContainer = document.getElementById('video-container');
-
-  const transcriptions = {
-    1: Array.from({ length: 22 }, (_, i) => `${i + 1}`),
-    2: Array.from({ length: 22 }, (_, i) => `${i + 23}`),//
-    3: Array.from({ length: 22 }, (_, i) => `${i + 45}`),
-    4: Array.from({ length: 22 }, (_, i) => `${i + 67}`),
-    5: Array.from({ length: 22 }, (_, i) => `${i + 89}`),
-    6: Array.from({ length: 22 }, (_, i) => `${i + 111}`),
-    7: Array.from({ length: 22 }, (_, i) => `${i + 133}`),
-    8: Array.from({ length: 22 }, (_, i) => `${i + 155}`),
-    9: Array.from({ length: 22 }, (_, i) => `${i + 177}`),
-    10: Array.from({ length: 22 }, (_, i) => `${i + 199}`),
-    11: Array.from({ length: 22 }, (_, i) => `${i + 221}`),
-  };
-
-  function populateTranscriptions(volume) {
-    transcriptionSelect.innerHTML = ''; // Clear existing options
-    const options = transcriptions[volume];
-    options.forEach(transcription => {
-      const option = document.createElement('option');
-      option.value = transcription;
-      option.text = "Transcription "+transcription.toString();
-      transcriptionSelect.appendChild(option);
-    });
-  }
-  
-  function updateVideo() {
-  const spd = document.getElementById('speed-select').value;
-  const tra = document.getElementById('transcription-select').value;
-	
-    //videoUrl = urlLookup[parseInt(tra,10)][parseInt(spd,10)];  // Use embed URL
-	paragraphA.value = textTable[parseInt(tra,10)];
-	paragraphB.placeholder = "Type transcription "+ tra +" here, or select a different transcription";
-    //videoContainer.innerHTML = `<iframe src="${videoUrl}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
-  }
-
-  volumeSelect.addEventListener('change', () => {
-    populateTranscriptions(volumeSelect.value);
-    updateVideo();
-  });
-
-  transcriptionSelect.addEventListener('change', updateVideo);
-  speedSelect.addEventListener('change', updateVideo);
-
-  // Initialize on load
-  populateTranscriptions(volumeSelect.value);
-  updateVideo();
-  updateTimerDisplay(); // Initial display
-
-
-function downloadPDF() {
-compareParagraphs();
-    
-
-    // Get the PDF file name
-    const pdfFileName = "Stenobuddy result";
-
-    // Get current date and time
-    const currentDate = new Date();
-    const day = currentDate.getDate();
-    const monthIndex = currentDate.getMonth();
-    const year = currentDate.getFullYear();
-    const hours = currentDate.getHours();
-    const currentMinutes = currentDate.getMinutes(); // Renamed to currentMinutes to avoid conflict
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    const formattedHours = hours % 12 || 12; // Convert to 12-hour format
-    const formattedMinutes = currentMinutes < 10 ? '0' + currentMinutes : currentMinutes;
-
-    // Array of month names
-    const monthNames = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ];
-
-    // Format the date
-    const formattedDate = `${day} ${monthNames[monthIndex]} ${year},`;
-
-    // Format the time
-    const formattedTime = `${formattedHours}:${formattedMinutes} ${ampm}`;
-
-    // Create header content with PDF file name, time taken, and download date
-    const headerContent = `
-        <div style="text-align: center;">
-            <a href="https://stenobuddy.github.io/" style="color: blue; text-decoration: none;">https://stenobuddy.github.io</a>
-        </div>
-        <div style="text-align: center; margin-top: 5px;">
-            Test Date & Time: ${formattedDate} ${formattedTime} <br>
-        </div>
-    `;
-
-    // Create a container for the header text
-    const headerText = document.createElement('div');
-    headerText.innerHTML = headerContent;
-    headerText.style.textAlign = 'left'; // Align the header text to the left
-
-    // Get the textBoxC element
-    const textBoxC = document.getElementById('textBoxC');
-
-    // Insert the header text before any other content in textBoxC
-    textBoxC.insertBefore(headerText, textBoxC.firstChild);
-
-}
-
-</script>
-
+<div class="footer-signature">
+  Made with <span class="beating-heart">♥</span> in Patna · Anshu
+</div>
+<a href="https://t.me/ar_anshu" title="Contact Us" style="position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; background-color: #0088cc; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 9999; transition: transform 0.2s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="#ffffff">
+        <path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/>
+    </svg>
+</a>
 </body>
 </html>
