@@ -496,6 +496,7 @@
         <option value="2">Volume 2</option>
         <option value="3">Volume 3</option>
         <option value="4">Volume 4</option>
+        <option value="5">Volume 5</option>
       </select>
 
       <select id="transcription-select">
@@ -620,7 +621,8 @@ for (let radio of durationRadios) {
     1: Array.from({ length: 22 }, (_, i) => `${i + 1}`),
     2: Array.from({ length: 22 }, (_, i) => `${i + 23}`),//
     3: Array.from({ length: 22 }, (_, i) => `${i + 45}`),
-    4: Array.from({ length: 11 }, (_, i) => `${i + 67}`),
+    4: Array.from({ length: 22 }, (_, i) => `${i + 67}`),
+	5: Array.from({ length: 12 }, (_, i) => `${i + 89}`),
   };
 
   function populateTranscriptions(volume) {
